@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import {normalizeGraph} from '../core/graph.mjs';
+import {roundRobinRun} from '../core/round-robin.mjs';
+import {recursiveBisection} from '../core/recursive-bisection.mjs';
+import {refineBySwaps} from '../core/refine.mjs';
+import {exactTiny} from '../core/exact.mjs';
+import {metrics} from '../core/metrics.mjs';
+const base=new URL('../',import.meta.url),g=normalizeGraph(JSON.parse(fs.readFileSync(new URL('data/tiny_graph.json',base))));
+const recursive=recursiveBisection(g,3),roundRobin=roundRobinRun(g,3),refined=refineBySwaps(g,roundRobin.assignment,3,2);
+const runs={graph:g,k:3,capacity:2,recursive,roundRobin,refined,exact:exactTiny(g,3,2),metrics:{recursive:metrics(g,recursive.assignment,3,2),roundRobin:metrics(g,roundRobin.assignment,3,2)}};
+fs.writeFileSync(new URL('data/reference-runs.json',base),JSON.stringify(runs,null,2));
+console.log(JSON.stringify({recursive:recursive.parts,cut:recursive.cut,roundRobin:roundRobin.cut,refined:metrics(g,refined.assignment,3,2).cut,exact:runs.exact.cut}));

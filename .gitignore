@@ -1,0 +1,11 @@
+.tools/
+node_modules/
+build/
+film/work/
+film/film-mix.wav
+film/timeline.json
+film/keyframes/
+__pycache__/
+.DS_Store
+film/lesson8-full.mp4
+film/TRANSCRIPT_DRAFT.md

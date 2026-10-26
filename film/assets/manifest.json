@@ -1,0 +1,17 @@
+{
+  "asset": "assets/student-sprites-v3.png",
+  "created_with": "Built-in image_gen tool; no API/CLI fallback",
+  "reference": "User-supplied cartoon image, provided in current conversation",
+  "prompt": "assets/character-prompt.txt",
+  "frames": [
+    "closed-mouth",
+    "speaking",
+    "blink"
+  ],
+  "background": "genuine RGBA transparency",
+  "usage": "small lower-left illustrated narrator in the course video; original reference file stays in ignored work/",
+  "supersedes": [
+    "preview/robot.js",
+    "preview-v2/student.js"
+  ]
+}

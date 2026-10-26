@@ -1,0 +1,319 @@
+{
+  "graph": {
+    "nodes": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "edges": [
+      {
+        "u": "A",
+        "v": "B",
+        "w": 5
+      },
+      {
+        "u": "A",
+        "v": "C",
+        "w": 1
+      },
+      {
+        "u": "B",
+        "v": "C",
+        "w": 4
+      },
+      {
+        "u": "C",
+        "v": "D",
+        "w": 2
+      },
+      {
+        "u": "D",
+        "v": "E",
+        "w": 5
+      },
+      {
+        "u": "C",
+        "v": "E",
+        "w": 1
+      }
+    ],
+    "sizes": {
+      "A": 1,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1
+    }
+  },
+  "k": 3,
+  "capacity": 2,
+  "recursive": {
+    "assignment": {
+      "A": 1,
+      "B": 1,
+      "C": 2,
+      "D": 0,
+      "E": 0
+    },
+    "history": [
+      {
+        "kind": "start",
+        "assignment": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0,
+          "E": 0
+        },
+        "cut": 0,
+        "parts": "ABCDE"
+      },
+      {
+        "kind": "split",
+        "split": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E"
+        ],
+        "source": 0,
+        "newLabel": 1,
+        "assignment": {
+          "A": 1,
+          "B": 1,
+          "C": 1,
+          "D": 0,
+          "E": 0
+        },
+        "cut": 3,
+        "addedCut": 3,
+        "parts": "ABC|DE",
+        "order": [
+          [
+            "E",
+            -0.5533188338244277
+          ],
+          [
+            "D",
+            -0.4888793378356137
+          ],
+          [
+            "C",
+            0.10568990112477616
+          ],
+          [
+            "B",
+            0.41755386119369026
+          ],
+          [
+            "A",
+            0.518954409341575
+          ]
+        ]
+      },
+      {
+        "kind": "split",
+        "split": [
+          "A",
+          "B",
+          "C"
+        ],
+        "source": 1,
+        "newLabel": 2,
+        "assignment": {
+          "A": 1,
+          "B": 1,
+          "C": 2,
+          "D": 0,
+          "E": 0
+        },
+        "cut": 8,
+        "addedCut": 5,
+        "parts": "AB|C|DE",
+        "order": [
+          [
+            "A",
+            -0.6524520041043492
+          ],
+          [
+            "B",
+            -0.09889725860896997
+          ],
+          [
+            "C",
+            0.7513492627133196
+          ]
+        ]
+      }
+    ],
+    "cut": 8,
+    "parts": "AB|C|DE"
+  },
+  "roundRobin": {
+    "assignment": {
+      "A": 0,
+      "B": 1,
+      "C": 2,
+      "D": 0,
+      "E": 1
+    },
+    "history": [
+      {
+        "kind": "assign",
+        "node": "A",
+        "part": 0,
+        "assignment": {
+          "A": 0
+        }
+      },
+      {
+        "kind": "assign",
+        "node": "B",
+        "part": 1,
+        "assignment": {
+          "A": 0,
+          "B": 1
+        }
+      },
+      {
+        "kind": "assign",
+        "node": "C",
+        "part": 2,
+        "assignment": {
+          "A": 0,
+          "B": 1,
+          "C": 2
+        }
+      },
+      {
+        "kind": "assign",
+        "node": "D",
+        "part": 0,
+        "assignment": {
+          "A": 0,
+          "B": 1,
+          "C": 2,
+          "D": 0
+        }
+      },
+      {
+        "kind": "assign",
+        "node": "E",
+        "part": 1,
+        "assignment": {
+          "A": 0,
+          "B": 1,
+          "C": 2,
+          "D": 0,
+          "E": 1
+        }
+      }
+    ],
+    "cut": 18,
+    "parts": "AD|BE|C"
+  },
+  "refined": {
+    "assignment": {
+      "A": 1,
+      "B": 1,
+      "C": 2,
+      "D": 0,
+      "E": 0
+    },
+    "history": [
+      {
+        "kind": "swap",
+        "a": "A",
+        "b": "E",
+        "gain": 10,
+        "assignment": {
+          "A": 1,
+          "B": 1,
+          "C": 2,
+          "D": 0,
+          "E": 0
+        },
+        "cut": 8
+      }
+    ],
+    "stopped": "local"
+  },
+  "exact": {
+    "available": true,
+    "feasible": true,
+    "checked": 90,
+    "cut": 8,
+    "assignment": {
+      "A": 0,
+      "B": 0,
+      "C": 1,
+      "D": 2,
+      "E": 2
+    }
+  },
+  "metrics": {
+    "recursive": {
+      "parts": [
+        [
+          "D",
+          "E"
+        ],
+        [
+          "A",
+          "B"
+        ],
+        [
+          "C"
+        ]
+      ],
+      "counts": [
+        2,
+        2,
+        1
+      ],
+      "sizes": [
+        2,
+        2,
+        1
+      ],
+      "cut": 8,
+      "capacity": 2,
+      "nonempty": true,
+      "feasible": true,
+      "imbalance": 0.19999999999999996
+    },
+    "roundRobin": {
+      "parts": [
+        [
+          "A",
+          "D"
+        ],
+        [
+          "B",
+          "E"
+        ],
+        [
+          "C"
+        ]
+      ],
+      "counts": [
+        2,
+        2,
+        1
+      ],
+      "sizes": [
+        2,
+        2,
+        1
+      ],
+      "cut": 18,
+      "capacity": 2,
+      "nonempty": true,
+      "feasible": true,
+      "imbalance": 0.19999999999999996
+    }
+  }
+}

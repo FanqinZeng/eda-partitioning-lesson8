@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "randomMethodRuns": 360,
+  "feasibleTinyLabelings": 90,
+  "optimum": 8,
+  "recursiveCut": 8,
+  "roundRobinCut": 18
+}

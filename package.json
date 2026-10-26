@@ -1,0 +1,1 @@
+{"name":"eda-partitioning-lesson8","private":true,"type":"module","scripts":{"test":"node tests/multiway.test.mjs","build":"node scripts/build_site.mjs","data":"node scripts/make_runs.mjs"},"engines":{"node":">=20"}}

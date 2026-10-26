@@ -1,0 +1,10 @@
+Use case: illustration-story
+Asset type: transparent three-frame character sprite sheet for a small lower-left narrator in an educational video.
+Input image: user-provided drawing is a VISUAL REFERENCE for character appeal, hairstyle, glasses, line quality, palette and clothing. Create a polished new illustration following this reference, not a 3D model.
+Primary request: a friendly young male university student with naturally fluffy dark brown slightly parted fragmented fringe (微分碎盖), round thin dark glasses, warm expressive brown eyes, soft natural face proportions, a light short-sleeve collared shirt with very subtle pale grey-green pattern, holding a bright orange notebook against his chest with both arms.
+Style: attractive clean hand-drawn 2D anime/editorial illustration, warm brown fine outlines, soft watercolour/cel shading, restrained highlights, slightly sketch-like hair strands. Follow the supplied reference closely in charm and visual treatment. Clearly a stylized college-age young adult, not a realistic businessman, not a plastic toy or geometric 3D avatar.
+Composition: ONE wide horizontal sprite sheet, exactly THREE equal-width columns, one waist-up instance of the SAME character in each. All three instances must have identical body pose, size, framing, head position, face identity, hairstyle, clothing and notebook, fully contained with safe transparent margins. Front view with only a slight turn toward screen right. No scenery, no panel borders, no labels, no text, no watermark. Actual transparent background.
+Frame 1 / left: eyes open, mouth gently closed in a friendly neutral smile.
+Frame 2 / middle: identical drawing, ONLY the mouth changes to a small natural speaking opening with a little upper teeth visible; eyes stay open.
+Frame 3 / right: identical drawing, ONLY eyes change to a natural closed blink; mouth closed like frame 1.
+Quality constraints: natural hands and arms, no stiff squared jaw, no oversized blocky glasses, no clumped plastic hair strips, no robot features. Preserve a consistent figure across all three columns. The whole character from hair tips to below notebook remains visible in each column.
