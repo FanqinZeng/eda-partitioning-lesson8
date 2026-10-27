@@ -18,6 +18,9 @@ chapters=json.loads((DOCS/'chapters.json').read_text());script=json.loads((ROOT/
 assert [c['id'] for c in chapters]==[s['id'] for s in script['scenes']]
 for i,c in enumerate(chapters):assert c['end']>c['start'] and (i==0 or c['start']>=chapters[i-1]['end']-.001)
 assert (DOCS/'assets/lesson8-full.mp4').stat().st_size>1000000
+assert (DOCS/'assets/lesson8-english.mp4').stat().st_size>1000000
+assert (DOCS/'assets/lesson8-english.srt').is_file()
+assert (DOCS/'assets/lesson8-english.vtt').is_file()
 assert (DOCS/'assets/lesson8-offline.zip').stat().st_size>1000000
 assert (DOCS/'spectral-lesson.mjs').is_file()
 print(json.dumps({'passed':True,'localLinks':len(p.links),'quizItems':len(quiz['items']),'chapters':len(chapters),'sourceSync':True}))

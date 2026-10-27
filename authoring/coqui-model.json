@@ -1,0 +1,11 @@
+{
+  "engine": "Coqui TTS",
+  "version": "0.22.0",
+  "model": "tts_models/en/vctk/vits",
+  "speaker": "p226",
+  "release": "https://github.com/coqui-ai/TTS/releases/tag/v0.6.1_models",
+  "modelSha256": "cbec6b420abcc677fe4a357994ee68f8f3b6fa84502e7accad42b11a79f6ad0d",
+  "modelLicense": "Apache-2.0 according to upstream TTS/.models.json",
+  "synthesis": "Local CPU inference; English text from film/script.json",
+  "phonemizer": "eSpeak NG 1.52.0"
+}

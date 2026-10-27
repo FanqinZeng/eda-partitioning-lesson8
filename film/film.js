@@ -2,7 +2,8 @@ import {createIllustratedStudent} from './student.js';
 import {C,kit,ease,mix} from './visuals.js';
 import {layout,palette} from '../site/draw.mjs';
 import {cutsize,metrics} from '../core/metrics.mjs';
-let response=await fetch('./timeline.json');
+const englishVoice=new URLSearchParams(location.search).get('voice')==='en';
+let response=await fetch(englishVoice?'./timeline-en.json':'./timeline.json');
 const draft=!response.ok;
 let timeline=draft?await(await fetch('./script.json')).json():await response.json();
 if(draft){let at=0;timeline.duration=timeline.target_seconds;timeline.cues=[];timeline.envelope=[];for(const s of timeline.scenes){s.start=at;s.end=at+s.target_seconds;s.cues.forEach((c,i)=>{c.start=at+i*s.target_seconds/s.cues.length;c.end=at+(i+1)*s.target_seconds/s.cues.length-.2;timeline.cues.push(c);});at=s.end;}}
@@ -78,4 +79,4 @@ function draw(s,t,j){const progress=ease((t-s.cues[0].start-.5)/3);
 }
 function renderFrame(t){t=Math.max(0,Math.min(t,timeline.duration-.001));const index=Math.max(0,timeline.scenes.findLastIndex(s=>s.start<=t)),s=timeline.scenes[index],j=Math.max(0,s.cues.findLastIndex(c=>c.start<=t));banner(s,t,index);draw(s,t,j);const amp=timeline.envelope[Math.min(timeline.envelope.length-1,Math.floor(t*100))]||0;ctx.drawImage(student.draw(t,amp),34,570,205,340.5);const cue=timeline.cues.find(c=>t>=c.start&&t<c.end+.15);if(cue){fit(cue.zh,960,970,1660,36,C.ink,600);fit(cue.en,960,1015,1660,25,C.muted,400);}return canvas.toDataURL('image/jpeg',.93);}
 window.renderFrame=renderFrame;window.duration=timeline.duration;window.timeline=timeline;window.algorithmEvidence={recursive:cutsize(g,rec),roundRobin:cutsize(g,rr),swap:cutsize(g,swapped),exact:evidence.exact.cut};await document.fonts.ready;renderFrame(1);window.ready=true;
-const audio=new Audio('./film-mix.wav');document.querySelector('#play').onclick=()=>{if(!audio.paused){audio.pause();return;}audio.play();const loop=()=>{renderFrame(audio.currentTime);if(!audio.paused)requestAnimationFrame(loop);};loop();};
+const audio=new Audio(englishVoice?'./film-mix-en.wav':'./film-mix.wav');document.querySelector('#play').onclick=()=>{if(!audio.paused){audio.pause();return;}audio.play();const loop=()=>{renderFrame(audio.currentTime);if(!audio.paused)requestAnimationFrame(loop);};loop();};

@@ -5,7 +5,10 @@ import {roundRobinRun} from './core/round-robin.mjs';
 import {refineBySwaps} from './core/refine.mjs';
 import {graphSvg,palette} from './draw.mjs';
 import {mountSpectralLesson,runTraceMarkup} from './spectral-lesson.mjs';
+import {createVoicePlayer} from './video-voice.mjs';
 const $=id=>document.getElementById(id),fmt=n=>Number.isInteger(n)?String(n):Number(n.toFixed(3)).toString();
+let voiceStorage;try{voiceStorage=window.localStorage;}catch{}
+const voicePlayer=createVoicePlayer($('lesson'),$('voice-language'),$('voice-status'),{sources:{zh:'assets/lesson8-full.mp4?v=voice-v3',en:'assets/lesson8-english.mp4?v=voice-v3'},download:$('download-current-video'),storage:voiceStorage,onChange:lang=>{const name=lang==='en'?'lesson8-english':'lesson8-bilingual';$('subtitle-srt').href=`assets/${name}.srt`;$('subtitle-vtt').href=`assets/${name}.vtt`;}});
 const starter=await (await fetch('./data/tiny_graph.json')).json();let g=normalizeGraph(starter),k=3,capacity=2,rec,rr,stage,manual,timer=null;
 function stats(a,constructing=false){const m=metrics(g,a,k,capacity),weighted=Object.values(g.sizes).some(x=>x!==1);return `<span>割代价<strong>${fmt(m.cut)}</strong></span><span>${weighted?'各组面积':'各组大小'}（按分区编号）<strong>${m.sizes.map(fmt).join(' / ')}</strong>${weighted?`<small>节点数 ${m.counts.join(' / ')}</small>`:''}</span><span class="${m.feasible?'valid':'invalid'}">容量 ${fmt(capacity)}<strong>${constructing?'构建中':m.feasible?'满足约束':'不满足约束'}</strong></span>`;}
 function stop(){clearInterval(timer);timer=null;$('auto').textContent='自动演示';$('auto').setAttribute('aria-pressed','false');}
@@ -50,7 +53,7 @@ $('manual-rr').onclick=()=>{manual={...rr.assignment};$('manual-message').textCo
 $('refine').onclick=()=>{const result=refineBySwaps(g,manual,k,capacity);manual=result.assignment;$('manual-message').textContent=result.history.length?result.history.map(h=>`交换 ${h.a} 与 ${h.b}，收益 ${fmt(h.gain)}`).join('；')+(result.stopped==='limit'?'。达到迭代上限。':'。已无正收益的可行成对交换。'):'当前没有正收益的可行成对交换。';renderManual();};
 refreshRuns(false);mountSpectralLesson(normalizeGraph(starter));$('hero-graph').innerHTML=graphSvg(g,rec.assignment,k,{title:'A B、C、D E 三个组'});
 const quiz=await(await fetch('./data/quiz.json')).json();$('quiz').replaceChildren(...(quiz.items??quiz).map((q,i)=>{const a=document.createElement('article');a.className='question';const h=document.createElement('h3');h.textContent=`${i+1}. ${q.prompt}`;const choices=document.createElement('ol');choices.type='A';choices.style.fontSize='14px';for(const choice of q.choices??[]){const li=document.createElement('li');li.textContent=choice;choices.append(li);}const d=document.createElement('details'),s=document.createElement('summary'),p=document.createElement('p');s.textContent='查看答案与解释';p.textContent=`${q.answer}\n${q.explain}`;d.append(s,p);a.append(h,choices,d);return a;}));
-const chapters=await(await fetch('./chapters.json')).json();for(const c of chapters){const b=document.createElement('button');const t=Math.floor(c.start);b.textContent=`${Math.floor(t/60)}:${String(t%60).padStart(2,'0')} ${c.title}`;b.onclick=()=>{const v=$('lesson'),seek=()=>{v.currentTime=c.start;v.play().catch(()=>{});};if(v.readyState>=1)seek();else{v.addEventListener('loadedmetadata',seek,{once:true});v.load();}};$('chapters').append(b);}
+const chapters=await(await fetch('./chapters.json')).json();for(const c of chapters){const b=document.createElement('button');const t=Math.floor(c.start);b.textContent=`${Math.floor(t/60)}:${String(t%60).padStart(2,'0')} ${c.title}`;b.onclick=()=>voicePlayer.seekAndPlay(c.start);$('chapters').append(b);}
 window.lesson8Ready=true;
 // Dynamic graphs and lesson panels change height during startup. Honor a deep
 // link after they are mounted, so #spectral lands on its actual heading.

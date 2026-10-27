@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "duration": 540.0,
+  "resolution": "1920x1080",
+  "fps": 24,
+  "fullDecode": true,
+  "blackSegmentsOver0_5s": 0,
+  "bilingualCues": 72,
+  "subtitleTimesMonotonic": true,
+  "everyNarrationCueNonSilent": true,
+  "narrationRmsRange": [
+    0.0492,
+    0.1092
+  ],
+  "mediaInfo": "Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '<project>/film/lesson8-english.mp4':\n  Metadata:\n    major_brand     : isom\n    minor_version   : 512\n    compatible_brands: isomiso2avc1mp41\n    encoder         : Lavf61.7.100\n  Duration: 00:09:00.00, start: 0.000000, bitrate: 637 kb/s\n  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuvj420p(pc, bt470bg/unknown/unknown, progressive), 1920x1080 [SAR 1:1 DAR 16:9], 438 kb/s, 24 fps, 24 tbr, 12288 tbn (default)\n      Metadata:\n        handler_name    : VideoHandler\n        vendor_id       : [0][0][0][0]\n        encoder         : Lavc61.19.100 libx264\n      Side data:\n        ICC Profile\n  Stream #0:1[0x2](eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 193 kb/s (default)\n      Metadata:\n        handler_name    : SoundHandler\n        vendor_id       : [0][0][0][0]\n  Stream #0:2[0x3](eng): Subtitle: mov_text (tx3g / 0x67337874), 0 kb/s (default)\n      Metadata:\n        handler_name    : SubtitleHandler\nAt least one output file must be specified\n",
+  "audioSource": "Coqui TTS 0.22.0 / tts_models/en/vctk/vits / p226",
+  "voiceRate": "base 1.08x, per-cue timing adjustment",
+  "voicePlaybackTempo": null
+}
