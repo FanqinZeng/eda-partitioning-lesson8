@@ -9,4 +9,5 @@ const files={'film/lesson8-full.mp4':'lesson8-full.mp4','film/lesson8-english.mp
 for(const [src,dst] of Object.entries(files)){if(fs.existsSync(path.join(root,src)))fs.copyFileSync(path.join(root,src),path.join(assets,dst));else if(!draft&&!fs.existsSync(path.join(assets,dst)))throw Error('Missing deliverable '+src);}
 if(fs.existsSync(path.join(root,'film/chapters.json')))fs.copyFileSync(path.join(root,'film/chapters.json'),path.join(out,'chapters.json'));
 else if(draft){let start=0;const script=JSON.parse(fs.readFileSync(path.join(root,'film/script.json')));fs.writeFileSync(path.join(out,'chapters.json'),JSON.stringify(script.scenes.map(s=>{const c={id:s.id,title:s.title,start,end:start+s.target_seconds};start=c.end;return c;})));}
+for(const name of ['chapters-en.json','voice-timing.json'])fs.copyFileSync(path.join(root,'film',name),path.join(out,name));
 fs.writeFileSync(path.join(out,'.nojekyll'),'');console.log('Built docs/ '+(draft?'(draft assets allowed)':'with all deliverables'));

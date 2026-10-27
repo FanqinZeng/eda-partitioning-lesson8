@@ -8,6 +8,7 @@ shutil.copytree(ROOT/'docs',DEST/'site',ignore=shutil.ignore_patterns('lesson8-o
 for directory in ['core','data','tests']:
     shutil.copytree(ROOT/directory,DEST/directory,dirs_exist_ok=True)
 for name in ['package.json','README.md','SOURCES.md']:shutil.copy2(ROOT/name,DEST/name)
+(DEST/'film').mkdir();shutil.copy2(ROOT/'film/voice-timing.json',DEST/'film/voice-timing.json')
 source=(ROOT/'scripts/serve.py').read_text().replace("Path(__file__).resolve().parents[1]/'docs'","Path(__file__).resolve().parent/'site'")
 (DEST/'start.py').write_text(source)
 html=(DEST/'site/index.html').read_text();html=html.replace('<a href="assets/lesson8-offline.zip" download><span>离线学习包</span><small>网站、视频、教材、算法与测试</small><b>↓</b></a>','')

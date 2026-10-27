@@ -21,6 +21,10 @@ assert (DOCS/'assets/lesson8-full.mp4').stat().st_size>1000000
 assert (DOCS/'assets/lesson8-english.mp4').stat().st_size>1000000
 assert (DOCS/'assets/lesson8-english.srt').is_file()
 assert (DOCS/'assets/lesson8-english.vtt').is_file()
+en_chapters=json.loads((DOCS/'chapters-en.json').read_text());timing=json.loads((DOCS/'voice-timing.json').read_text())
+assert [c['id'] for c in en_chapters]==[c['id'] for c in chapters]
+assert len(timing['zh'])==len(timing['en']) and abs(timing['en'][-1]-en_chapters[-1]['end'])<1e-5
+for lang in ['zh','en']:assert all(b>a for a,b in zip(timing[lang],timing[lang][1:]))
 assert (DOCS/'assets/lesson8-offline.zip').stat().st_size>1000000
 assert (DOCS/'spectral-lesson.mjs').is_file()
 print(json.dumps({'passed':True,'localLinks':len(p.links),'quizItems':len(quiz['items']),'chapters':len(chapters),'sourceSync':True}))

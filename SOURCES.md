@@ -22,7 +22,7 @@
 ## 声音、字体与工具
 
 - Microsoft Edge TTS `zh-CN-YunxiNeural` 提供合成讲解声音；新版速率为 +8%，输出没有额外音频变速，成片音源记录在 `film/media-check.json`。这是合成配音，不是作者本人录音或克隆声音。
-- 英文配音使用 [Coqui TTS](https://github.com/coqui-ai/TTS) 0.22.0，在本机运行 `tts_models/en/vctk/vits`，选用预置声音 p226。上游[模型登记表](https://github.com/coqui-ai/TTS/blob/dev/TTS/.models.json)将该模型标为 Apache 2.0；软件仓库采用 MPL-2.0。模型出自 Coqui 官方 [v0.6.1_models 发布](https://github.com/coqui-ai/TTS/releases/tag/v0.6.1_models)，输出按已有九分钟场景时钟对齐。
+- 英文配音使用 [Coqui TTS](https://github.com/coqui-ai/TTS) 0.22.0，在本机运行 `tts_models/en/vctk/vits`，选用预置声音 p226。上游[模型登记表](https://github.com/coqui-ai/TTS/blob/dev/TTS/.models.json)将该模型标为 Apache 2.0；软件仓库采用 MPL-2.0。模型出自 Coqui 官方 [v0.6.1_models 发布](https://github.com/coqui-ai/TTS/releases/tag/v0.6.1_models)，英文语速为固定0.88倍，按自然句间停顿组织约7分36秒的独立时间轴。
 - 英文发音前端使用 [eSpeak NG](https://github.com/espeak-ng/espeak-ng) 1.52.0；依赖与模型下载到本地后，合成时不发送课程台词。
 - 配乐和提示音由 `scripts/prepare_audio.py` 合成，没有使用第三方音乐录音。
 - 网页与影片使用运行机中文系统字体，仓库不分发字体文件。课件和讲义使用 Arial Unicode MS；相关字体子集或字形结果随输出文件保存。

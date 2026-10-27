@@ -8,13 +8,13 @@ FanQin Zeng · EDA Learning / Partitioning Lesson 8。
 
 ## 学习资料
 
-- [中文配音视频](docs/assets/lesson8-full.mp4) · [English voice](docs/assets/lesson8-english.mp4)：九分钟，1080p，中英配音可选、中英双语字幕，沿用上一课的手绘大学生讲师。
+- [中文配音视频](docs/assets/lesson8-full.mp4) · [English voice](docs/assets/lesson8-english.mp4)：中文9分钟、英文约7分36秒，1080p，中英配音可选、中英双语字幕，沿用上一课的手绘大学生讲师。
 - [可编辑课件](materials/Lesson8-lecture.pptx) · [课件 PDF](materials/Lesson8-slides.pdf)
 - [自学讲义和八道练习解析](materials/Lesson8-guide.pdf) · [讲义文字版](materials/Lesson8-guide.md)
 - [完整离线学习包](docs/assets/lesson8-offline.zip) · [SRT](docs/assets/lesson8-bilingual.srt) · [VTT](docs/assets/lesson8-bilingual.vtt)
 - [分镜与完整文字稿](film/STORYBOARD.md) · [课堂使用建议](materials/CLASSROOM_PLAN.md)
 
-播放器上方可以选择“中文 / English”配音。切换保留时间、播放/暂停、倍速、音量和静音状态，字幕下载链接随配音切换；两版均为九分钟。下载区和离线包都包含两种配音。
+播放器上方可以选择“中文 / English”配音。切换按当前句子及句内进度映射播放位置，并保留播放/暂停、倍速、音量和静音状态；章节和字幕下载链接随配音切换。下载区和离线包都包含两种配音。
 
 网站包含视频章节跳转、逐刀的五步谱二分讲解、矩阵行切换、真实坐标迭代记录、可点击的候选切口、十二道网页练习、两种方法对照、递归过程、手动分组、边权与节点面积编辑、参数挑战、自定义 JSON 图及练习解析。纯静态，无账号、后端或外部网页依赖。
 
@@ -48,7 +48,7 @@ python3 scripts/serve.py --port 8008
 4. 对四个候选切口计算代价 6、3、5、6，选择 ED｜CBA，新增 3。
 5. 选择最大的 ABC，只用内部三条边重新计算；排序 A、B、C，候选代价 6 与 5，新增 5，最终 8。
 
-九分钟视频包含25个场景、72组双语字幕。中文声音沿用 Yunxi，速率为 +8%，没有额外音频变速。英文版采用 Coqui TTS 0.22.0 的 VCTK/VITS 预置声音 p226 在本地合成，按原有场景与章节时间逐句对齐，并重新渲染口型和字幕显示时段。初始与最终坐标、矩阵和候选表全部取自实际代码记录；谱坐标目标值与离散割代价分别解释。
+两版视频都包含25个场景、72组双语字幕。中文声音沿用 Yunxi，速率为 +8%，没有额外音频变速。英文版采用 Coqui TTS 0.22.0 的 VCTK/VITS 预置声音 p226 在本地合成，采用固定0.88倍合成语速，比上一版约慢19%，句间停顿0.55秒、跨场景停顿0.95秒，重新渲染口型、字幕和章节时间；英文版约7分36秒，中文版仍为9分钟。初始与最终坐标、矩阵和候选表全部取自实际代码记录；谱坐标目标值与离散割代价分别解释。
 
 轮询是直接分配的简单基线。成对交换示例只接受保持容量可行的正收益交换，不是完整 k-way FM。递归方法优先切分节点数最多的分区，二分子程序对齐教师的谱方法、80 次迭代和局部 20%–80% 面积过滤。最终 k 路容量另行检查，不能从局部过滤推断最终可行性。
 
@@ -116,4 +116,4 @@ node scripts/build_site.mjs
 python scripts/package_offline.py
 ```
 
-`L8_FFMPEG` 可指定 FFmpeg 路径；影片渲染使用与中文版相同的 `L8_NODE_MODULES`、`L8_PYTHON` 等环境设置。英文逐句速度与时序记录见 `film/english-alignment.json`，英文字幕单独保存。模型权重与本地构建依赖不随仓库或离线包分发。
+`L8_FFMPEG` 可指定 FFmpeg 路径；影片渲染使用与中文版相同的 `L8_NODE_MODULES`、`L8_PYTHON` 等环境设置。默认英文语速为0.88倍，可用 `--tempo` 调整；英文逐句速度与时序记录见 `film/english-alignment.json`，英文字幕单独保存。模型权重与本地构建依赖不随仓库或离线包分发。

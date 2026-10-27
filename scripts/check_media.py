@@ -11,8 +11,10 @@ seconds=int(duration[1])*3600+int(duration[2])*60+float(duration[3]);assert abs(
 if not args.english:assert tl.get('voice_playback_tempo')==1,'Unexpected audio time compression'
 else:
  alignment=json.loads((ROOT/'film/english-alignment.json').read_text());assert alignment['allCuesWithinSceneClock']
- assert alignment['maximumTempo']<=1.35
- chinese=json.loads((ROOT/'film/timeline.json').read_text());assert [(s['start'],s['end']) for s in tl['scenes']]==[(s['start'],s['end']) for s in chinese['scenes']]
+ assert alignment['maximumTempo']==.88
+ assert alignment['maximumCueGap']<=.951
+ chinese=json.loads((ROOT/'film/timeline.json').read_text());assert [s['id'] for s in tl['scenes']]==[s['id'] for s in chinese['scenes']]
+ for s in tl['scenes']:assert all(s['start']<=c['start']<c['end']<=s['end'] for c in s['cues'])
 black=subprocess.run([ff,'-hide_banner','-i',str(film),'-vf','blackdetect=d=0.5:pix_th=0.05','-an','-f','null','-'],capture_output=True,text=True).stderr
 assert 'black_start' not in black
 previous=0
