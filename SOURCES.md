@@ -9,6 +9,8 @@
 
 没有将轮询描述成所有直接多路算法，没有将贪心成对交换描述成完整多路 FM。对本图 90 个可行带标签分配的精确枚举与方法比较见 `data/reference-runs.json`、`tests/multiway.test.mjs`。
 
+- [Spielman《Spectral Graph Theory》Lecture 2，第2.3节](https://cs.yale.edu/homes/spielman/561/lect02-15.pdf)：拉普拉斯二次型、零和与单位范数约束、第二小特征值对应坐标的数学依据。新版网页与视频的矩阵、坐标和候选数据来自本课实际算法追踪。
+
 ## 视觉与人物
 
 - 作者上一课：[eda-clustering-lab7-kl](https://github.com/FanqinZeng/eda-clustering-lab7-kl)。本课延续米白、深蓝、青绿、蓝色与橙色的视觉体系，为第三分区补充紫色。
@@ -19,7 +21,7 @@
 
 ## 声音、字体与工具
 
-- Microsoft Edge TTS `zh-CN-YunxiNeural` 提供合成讲解声音，成片音源记录在 `film/media-check.json`。这是合成配音，不是作者本人录音或克隆声音。
+- Microsoft Edge TTS `zh-CN-YunxiNeural` 提供合成讲解声音；新版速率为 +8%，输出没有额外音频变速，成片音源记录在 `film/media-check.json`。这是合成配音，不是作者本人录音或克隆声音。
 - 配乐和提示音由 `scripts/prepare_audio.py` 合成，没有使用第三方音乐录音。
 - 网页与影片使用运行机中文系统字体，仓库不分发字体文件。课件和讲义使用 Arial Unicode MS；相关字体子集或字形结果随输出文件保存。
 - FFmpeg 由 imageio-ffmpeg 提供；edge-tts 与 Playwright 用于媒体制作。项目不把机器上的依赖目录、浏览器或凭据纳入仓库。

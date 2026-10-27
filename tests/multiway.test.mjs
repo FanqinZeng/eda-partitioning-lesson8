@@ -6,11 +6,20 @@ import {roundRobinRun} from '../core/round-robin.mjs';
 import {recursiveBisection} from '../core/recursive-bisection.mjs';
 import {refineBySwaps} from '../core/refine.mjs';
 import {exactTiny} from '../core/exact.mjs';
+import {spectralBisection,laplacian} from '../core/spectral.mjs';
 const g=normalizeGraph(JSON.parse(fs.readFileSync(new URL('../data/tiny_graph.json',import.meta.url))));
 const direct=(g,a)=>g.edges.reduce((sum,e)=>sum+(a[e.u]!==a[e.v]?e.w:0),0);
 const r=recursiveBisection(g,3),rr=roundRobinRun(g,3);
 assert.equal(r.parts,'AB|C|DE');assert.equal(r.cut,8);assert.equal(rr.parts,'AD|BE|C');assert.equal(rr.cut,18);
 assert.deepEqual(r.history.map(x=>x.cut),[0,3,8]);assert.deepEqual(r.history.slice(1).map(x=>x.addedCut),[3,5]);
+// Explanations must expose actual solver data, not hand-authored candidate tables.
+assert.deepEqual(r.history[1].order.map(v=>v[0]),['E','D','C','B','A']);
+assert.deepEqual(r.history[1].spectral.candidates.map(c=>c.cut),[6,3,5,6]);
+assert.deepEqual(r.history[2].order.map(v=>v[0]),['A','B','C']);
+assert.deepEqual(r.history[2].spectral.candidates.map(c=>c.cut),[6,5]);
+assert.deepEqual(laplacian(g.nodes,g.edges)[0],[6,-5,-1,0,0]);
+const fallback=spectralBisection(['A','B'],[{u:'A',v:'B',w:2}],{A:99,B:1});
+assert.ok(fallback.trace.fallback);assert.ok(fallback.trace.candidates.every(c=>!c.eligible));
 assert.deepEqual(metrics(g,r.assignment,3,2).counts.slice().sort(),[1,2,2]);assert.ok(metrics(g,r.assignment,3,2).feasible);
 let optimum=Infinity,feasible=0;
 for(let mask=0;mask<3**5;mask++){let m=mask;const a={};for(const n of g.nodes){a[n]=m%3;m=Math.floor(m/3);}const counts=[0,0,0];Object.values(a).forEach(p=>counts[p]++);if(counts.every(c=>c>0&&c<=2)){feasible++;optimum=Math.min(optimum,direct(g,a));}}
@@ -34,7 +43,28 @@ for(let t=0;t<180;t++){
   assert.equal(stat.sizes.reduce((a,b)=>a+b),Object.values(x.sizes).reduce((a,b)=>a+b));
   const relabel=Object.fromEntries(nodes.map(a=>[a,k-1-result.assignment[a]]));assert.equal(direct(x,relabel),result.cut);
   assert.equal(partsString(x,relabel,k),result.parts);
-  for(const h of result.history.filter(x=>x.kind==='split'))assert.equal(h.cut,direct(x,h.assignment));
+  for(const h of result.history.filter(x=>x.kind==='split')){
+   assert.equal(h.cut,direct(x,h.assignment));const tr=h.spectral;
+   for(let i=0;i<tr.nodes.length;i++){
+    const name=tr.nodes[i],degree=tr.edges.filter(e=>e.u===name||e.v===name).reduce((s,e)=>s+e.w,0);
+    assert.equal(tr.matrix[i][i],degree);assert.equal(tr.matrix[i].reduce((a,b)=>a+b),0);
+    for(let j=0;j<tr.nodes.length;j++)assert.equal(tr.matrix[i][j],tr.matrix[j][i]);
+   }
+   for(const snap of tr.snapshots){
+    assert.ok(Math.abs(snap.values.reduce((a,b)=>a+b))<1e-8);
+    assert.ok(Math.abs(snap.values.reduce((a,b)=>a+b*b,0)-1)<1e-8);
+    const v=Object.fromEntries(tr.nodes.map((name,i)=>[name,snap.values[i]]));
+    const energy=tr.edges.reduce((s,e)=>s+e.w*(v[e.u]-v[e.v])**2,0);
+    assert.ok(Math.abs(energy-snap.energy)<1e-8);
+   }
+   for(const c of tr.candidates){
+    const left=new Set(c.left),expected=tr.edges.filter(e=>left.has(e.u)!==left.has(e.v));
+    assert.equal(c.cut,expected.reduce((s,e)=>s+e.w,0));assert.deepEqual(c.edges,expected);
+    assert.equal(c.eligible,c.fraction>=.2&&c.fraction<=.8);
+   }
+   const selected=tr.candidates.find(c=>c.chosen);assert.equal(selected.cut,h.addedCut);
+   if(!tr.fallback)assert.equal(selected.cut,Math.min(...tr.candidates.filter(c=>c.eligible).map(c=>c.cut)));
+  }
   if(stat.feasible){const f=refineBySwaps(x,result.assignment,k,cap);let prev=result.cut;for(const h of f.history){assert.ok(h.cut<prev-1e-9);assert.ok(metrics(x,h.assignment,k,cap).feasible);assert.ok(Math.abs(prev-h.cut-h.gain)<1e-7);prev=h.cut;}}
   checked++;
  }

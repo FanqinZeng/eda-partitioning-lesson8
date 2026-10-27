@@ -44,12 +44,11 @@ def main():
     asyncio.run(generate());clips={c['id']:decode(file(c)) for c in cues};gap=.27
     minimum=[sum(len(clips[c['id']])/RATE for c in s['cues'])+gap*(len(s['cues'])-1)+.9 for s in scenes]
     minTotal=sum(minimum)
-    if minTotal>script['target_seconds']:
-        voiceTotal=sum(len(a)/RATE for a in clips.values());tempo=min(1.12,voiceTotal/(script['target_seconds']-(minTotal-voiceTotal)))
-        clips={c['id']:decode(file(c),tempo) for c in cues}
-        minimum=[sum(len(clips[c['id']])/RATE for c in s['cues'])+gap*(len(s['cues'])-1)+.9 for s in scenes]
+    # Keep the explicitly requested voice rate. Extend the film rather than
+    # silently time-compressing mathematical explanations to a fixed runtime.
+    target=max(script['target_seconds'],minTotal)
     extras=[max(0,s['target_seconds']-m) for s,m in zip(scenes,minimum)]
-    rest=max(0,script['target_seconds']-sum(minimum));weight=sum(extras) or len(scenes)
+    rest=max(0,target-sum(minimum));weight=sum(extras) or len(scenes)
     durations=[m+rest*(e if sum(extras) else 1)/weight for m,e in zip(minimum,extras)]
     total=round(sum(durations)*RATE);voice=np.zeros(total,dtype=np.float32);position=0
     for s,duration in zip(scenes,durations):
@@ -77,7 +76,7 @@ def main():
     block=480;padded=np.pad(voice,(0,(-len(voice))%block));env=np.sqrt(np.mean(padded.reshape(-1,block)**2,axis=1));duck=np.repeat(np.minimum(env/.14,1),block)[:total]
     music*=1-.45*duck;fade=np.minimum(np.arange(total)/(RATE*.8),1)*np.minimum((total-np.arange(total))/(RATE*1.5),1);music*=fade
     mix=np.column_stack([voice+music+sfx,voice+.97*music+sfx]);wav(OUT/'film-mix.wav',mix);wav(WORK/'narration.wav',voice)
-    script.update(duration=total/RATE,cues=cues,envelope_fps=100,envelope=np.minimum(env/.14,1).round(3).tolist(),audio_source='Microsoft Edge TTS / zh-CN-YunxiNeural' if args.edge else 'macOS local speech / Reed Chinese',music='Original synthesized score, scripts/prepare_audio.py')
+    script.update(duration=total/RATE,cues=cues,envelope_fps=100,envelope=np.minimum(env/.14,1).round(3).tolist(),audio_source='Microsoft Edge TTS / zh-CN-YunxiNeural' if args.edge else 'macOS local speech / Reed Chinese',voice_playback_tempo=1,music='Original synthesized score, scripts/prepare_audio.py')
     (OUT/'timeline.json').write_text(json.dumps(script,ensure_ascii=False,indent=2))
     for web in [False,True]:
         lines=['WEBVTT',''] if web else []

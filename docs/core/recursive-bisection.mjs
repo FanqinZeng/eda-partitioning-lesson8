@@ -12,7 +12,7 @@ export function recursiveBisection(g,k){
   if(members.length<2)break;
   const edges=g.edges.filter(e=>set.has(e.u)&&set.has(e.v));const r=spectralBisection(members,edges,g.sizes),before=cutsize(g,assignment);
   for(const n of members)if(r.assignment[n]==='1')assignment[n]=label;
-  const after=cutsize(g,assignment);history.push({kind:'split',split:members,source:chosen.label,newLabel:label,assignment:{...assignment},cut:after,addedCut:after-before,parts:partsString(g,assignment,k),order:r.order});label++;
+  const after=cutsize(g,assignment);history.push({kind:'split',split:members,source:chosen.label,newLabel:label,assignment:{...assignment},cut:after,addedCut:after-before,parts:partsString(g,assignment,k),order:r.order,spectral:r.trace});label++;
  }
  return {assignment,history,cut:cutsize(g,assignment),parts:partsString(g,assignment,k)};
 }

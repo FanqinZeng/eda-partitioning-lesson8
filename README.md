@@ -8,13 +8,13 @@ FanQin Zeng · EDA Learning / Partitioning Lesson 8。
 
 ## 学习资料
 
-- [完整教学视频](docs/assets/lesson8-full.mp4)：约六分钟，1080p，中文合成旁白、中英双语字幕，沿用上一课的手绘大学生讲师。
+- [完整教学视频](docs/assets/lesson8-full.mp4)：九分钟，1080p，中文合成旁白、中英双语字幕，沿用上一课的手绘大学生讲师。
 - [可编辑课件](materials/Lesson8-lecture.pptx) · [课件 PDF](materials/Lesson8-slides.pdf)
 - [自学讲义和八道练习解析](materials/Lesson8-guide.pdf) · [讲义文字版](materials/Lesson8-guide.md)
 - [完整离线学习包](docs/assets/lesson8-offline.zip) · [SRT](docs/assets/lesson8-bilingual.srt) · [VTT](docs/assets/lesson8-bilingual.vtt)
 - [分镜与完整文字稿](film/STORYBOARD.md) · [课堂使用建议](materials/CLASSROOM_PLAN.md)
 
-网站包含视频章节跳转、两种方法对照、递归过程、手动分组、边权与节点面积编辑、参数挑战、自定义 JSON 图及练习解析。纯静态，无账号、后端或外部网页依赖。
+网站包含视频章节跳转、逐刀的五步谱二分讲解、矩阵行切换、真实坐标迭代记录、可点击的候选切口、十二道网页练习、两种方法对照、递归过程、手动分组、边权与节点面积编辑、参数挑战、自定义 JSON 图及练习解析。纯静态，无账号、后端或外部网页依赖。
 
 ## 本地运行
 
@@ -38,6 +38,16 @@ python3 scripts/serve.py --port 8008
 
 递归过程：ABCDE → ABC / DE，代价 3；再切分 ABC → AB / C，新增代价 5，最终为 8。两条权重为 5 的边 AB、DE 留在组内，解释了 18 与 8 的全部差异。
 
+新版把选择依据放在分组结果之前：
+
+1. ABCDE 是固定输入索引；轮询直接使用它，谱二分会生成新顺序。
+2. 由边权构造 `L = D − W`；例如 A 行为 `[6, -5, -1, 0, 0]`。
+3. 数值近似 Fiedler 向量，第一刀排序为 E、D、C、B、A。
+4. 对四个候选切口计算代价 6、3、5、6，选择 ED｜CBA，新增 3。
+5. 选择最大的 ABC，只用内部三条边重新计算；排序 A、B、C，候选代价 6 与 5，新增 5，最终 8。
+
+九分钟视频包含25个场景、72组双语字幕。声音沿用 Yunxi，速率从 +3% 调到 +8%，没有额外音频变速。初始与最终坐标、矩阵和候选表全部取自实际代码记录；谱坐标目标值与离散割代价分别解释。
+
 轮询是直接分配的简单基线。成对交换示例只接受保持容量可行的正收益交换，不是完整 k-way FM。递归方法优先切分节点数最多的分区，二分子程序对齐教师的谱方法、80 次迭代和局部 20%–80% 面积过滤。最终 k 路容量另行检查，不能从局部过滤推断最终可行性。
 
 ## 算法与验证
@@ -58,7 +68,7 @@ npm run build
 
 ## 制作与复现
 
-成品可直接使用。重新制作影片需要 Node.js、Chrome/Chromium、Python 和项目媒体依赖；PPTX 制作需要 Codex 的 `@oai/artifact-tool` 运行时。教材源文件保存在 `authoring/`。
+成品可直接使用。下载的16页课件和6页基础讲义保留原有多路划分内容；新版谱二分完整推导见网页五步演示和九分钟影片。重新制作影片需要 Node.js、Chrome/Chromium、Python 和项目媒体依赖；PPTX 制作需要 Codex 的 `@oai/artifact-tool` 运行时。教材源文件保存在 `authoring/`。
 
 ```sh
 python3 -m pip install --target .tools/python edge-tts==7.3.1 imageio-ffmpeg==0.6.0 numpy reportlab

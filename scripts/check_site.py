@@ -13,9 +13,11 @@ assert not missing,missing
 for source in (ROOT/'core').glob('*.mjs'):assert source.read_bytes()==(DOCS/'core'/source.name).read_bytes(),source.name
 for source in (ROOT/'site').iterdir():
     if source.is_file():assert source.read_bytes()==(DOCS/source.name).read_bytes(),source.name
-quiz=json.loads((DOCS/'data/quiz.json').read_text());assert len(quiz['items'])==8
-chapters=json.loads((DOCS/'chapters.json').read_text());assert len(chapters)==20
+quiz=json.loads((DOCS/'data/quiz.json').read_text());assert len(quiz['items'])==12
+chapters=json.loads((DOCS/'chapters.json').read_text());script=json.loads((ROOT/'film/script.json').read_text());assert len(chapters)==len(script['scenes'])
+assert [c['id'] for c in chapters]==[s['id'] for s in script['scenes']]
 for i,c in enumerate(chapters):assert c['end']>c['start'] and (i==0 or c['start']>=chapters[i-1]['end']-.001)
 assert (DOCS/'assets/lesson8-full.mp4').stat().st_size>1000000
 assert (DOCS/'assets/lesson8-offline.zip').stat().st_size>1000000
-print(json.dumps({'passed':True,'localLinks':len(p.links),'quizItems':8,'chapters':20,'sourceSync':True}))
+assert (DOCS/'spectral-lesson.mjs').is_file()
+print(json.dumps({'passed':True,'localLinks':len(p.links),'quizItems':len(quiz['items']),'chapters':len(chapters),'sourceSync':True}))

@@ -9,6 +9,8 @@ if(draft){let at=0;timeline.duration=timeline.target_seconds;timeline.cues=[];ti
 timeline.draft=draft;
 const evidence=await(await fetch('../data/reference-runs.json')).json(),g=evidence.graph,rr=evidence.roundRobin.assignment,rec=evidence.recursive.assignment,coarse=evidence.recursive.history[1].assignment;
 const swapped={...rr,B:rr.D,D:rr.B},all=Object.fromEntries(g.nodes.map(n=>[n,0]));
+const first=evidence.recursive.history[1],second=evidence.recursive.history[2],firstTrace=first.spectral,secondTrace=second.spectral;
+const num=v=>Number(v.toFixed(3)).toString();
 const canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d'),k=kit(ctx),student=await createIllustratedStudent();
 const {rect,text,circle,line,fit,pill,arrow}=k;
 const names={A:'小安',B:'小白',C:'小陈',D:'小杜',E:'小易'};
@@ -32,6 +34,16 @@ function splitTree(){
  arrow(1050,345,700,415,C.muted);arrow(1050,345,1440,415,C.muted);arrow(700,515,490,625,C.muted);arrow(700,515,920,625,C.muted);
  for(const [label,x,y,p] of boxes){rect(x-140,y-45,280,90,22,palette[p]+'12');text(label,x,y+15,42,palette[p],650,'center');}
 }
+function matrix(trace,x,y,cell=85,highlight=-1){
+ const ns=trace.nodes;ns.forEach((n,i)=>{text(n,x+(i+1.5)*cell,y+cell*.6,28,C.muted,600,'center');text(n,x+cell*.5,y+(i+1.65)*cell,28,C.muted,600,'center');});
+ trace.matrix.forEach((row,i)=>{if(i===highlight)rect(x+cell,y+(i+1)*cell,ns.length*cell,cell-4,10,'#e1f1e8');row.forEach((v,j)=>text(v,x+(j+1.5)*cell,y+(i+1.65)*cell,34,i===j?C.teal:C.ink,i===j?700:500,'center'));});
+ line(x+cell-12,y+cell,x+cell-12,y+(ns.length+1)*cell,C.muted,3);line(x+(ns.length+1)*cell+12,y+cell,x+(ns.length+1)*cell+12,y+(ns.length+1)*cell,C.muted,3);
+}
+function sweeps(trace,active,y=300){
+ const x=340,w=1440,hh=68,rh=88,columns=[['候选切口',x+250],['被切断的边',x+855],['代价',x+1310]];
+ rect(x,y,w,hh,15,'#e8f0eb');columns.forEach(([l,c])=>text(l,c,y+45,27,C.muted,600,'center'));
+ trace.candidates.forEach((c,i)=>{const yy=y+hh+i*rh;if(c.chosen)rect(x,yy,w,rh-4,12,'#dff1e7');if(active===i)rect(x+3,yy+3,w-6,rh-10,10,null,C.blue);const label=c.left.join('')+' │ '+c.right.join('');fit(label,columns[0][1],yy+55,460,35,C.ink,650);fit(c.edges.map(e=>`${e.u}–${e.v}(${e.w})`).join(' + '),columns[1][1],yy+55,680,31,C.ink,500);text(c.cut,columns[2][1],yy+55,42,c.chosen?C.teal:C.ink,700,'center');});
+}
 function draw(s,t,j){const progress=ease((t-s.cues[0].start-.5)/3);
  switch(s.mode){
  case 'life':graph(all,{x:345,y:350,w:1350,h:310,parts:1,people:true,raw:true});pill('三个小组完成项目',140,255,330);bottom('两组变三组，原来的分法也要重新考虑','从生活问题出发');break;
@@ -41,7 +53,15 @@ function draw(s,t,j){const progress=ease((t-s.cues[0].start-.5)/3);
  case 'roundrobin':g.nodes.forEach((n,i)=>{const x=440+i*280;rect(x-80,265,160,75,18,palette[rr[n]]+'15');text(`${n} → ${rr[n]}`,x,315,33,palette[rr[n]],650,'center');});graph(rr,{y:345,h:405,previous:all,p:progress});bottom('按字母顺序，分区编号 = 序号 mod 3','得到 AD、BE、C');break;
  case 'roundcut':graph(rr,{y:260,h:470,highlight:j===0?[0,4]:[]});bottom(`5 + 1 + 4 + 2 + 5 + 1 = ${cutsize(g,rr)}`,'六条边全部跨区',C.orange);break;
  case 'recurseidea':splitTree();bottom('每次切分当前最大的分区，直到出现三个叶子','树的叶子对应最终分区');break;
+ case 'inputorder':card('轮询：直接按顺序放组',['A → 0，B → 1，C → 2','D → 0，E → 1','字母顺序参与这个基线'],340,325,680,365,C.blue);card('谱二分：计算新的排序',['A…E 固定输入索引','连线权重 → 每点一个坐标','再按坐标从小到大排列'],1090,325,680,365);bottom('字母是名称；谱排序由当前子图的连接关系计算');break;
+ case 'spectralidea':if(j===0){graph(all,{x:350,y:330,w:1370,h:370,parts:1,raw:true,highlight:[0,4]});bottom('权重越大，越不希望两端坐标相隔很远','弹簧的直觉');}else{text('让 E(x) 尽量小',1060,320,41,C.teal,650,'center');text('5(xA − xB)² + (xA − xC)² + 4(xB − xC)²',1060,405,39,C.ink,500,'center');text('+ 2(xC − xD)² + 5(xD − xE)² + (xC − xE)²',1060,470,39,C.ink,500,'center');card('固定中心',['xA + xB + xC + xD + xE = 0'],350,535,680,205,C.blue);card('固定尺度',['xA² + xB² + xC² + xD² + xE² = 1'],1100,535,680,205);bottom('边权 × 坐标差的平方，再对所有边求和','这是坐标目标值');}break;
+ case 'laplacian':matrix(firstTrace,350,280,76,j===1?0:-1);card('构造规则',['对角线：连接边权之和','其他格：两点间边权的负数','没有边：填 0'],970,305,790,280);text('A 连接 B(5)、C(1)',1000,650,36,C.teal,650);text('A 行：[ 6, −5, −1, 0, 0 ]',1000,715,36,C.ink,600);bottom('L = D − W；行、列都按 A、B、C、D、E 对应');break;
+ case 'fiedler':card('对于这张连通图',['第二小特征值对应的向量','每个分量就是一个谱坐标','名称：Fiedler（菲德勒）向量'],340,300,680,320);text('Lx = λ₂x',680,725,61,C.teal,650,'center');card('本课代码做 80 轮近似迭代',['① 近似解 (L + 0.001I)y = x','② 对 y 减去均值','③ 归一化，得到下一轮 x'],1090,300,680,320,C.blue);text('排除所有坐标相同的情形',1430,705,31,C.muted,500,'center');bottom('把连续坐标问题交给数值算法求解','无需手算 80 轮');break;
+ case 'spectralorder':{const v=Object.fromEntries(first.order),xs=[420,705,990,1275,1560];text('输入索引',350,305,27,C.muted,600);g.nodes.forEach((n,i)=>{const x=xs[i];rect(x,335,185,140,18,'#edf2f6');text(n,x+92,395,44,C.blue,650,'center');text(num(v[n]),x+92,446,28,C.muted,500,'center');});text('按坐标从小到大',350,550,27,C.teal,650);first.order.forEach(([n,val],i)=>{const x=xs[i];rect(x,580,185,140,18,'#e5f2e9');text(n,x+92,640,44,C.teal,650,'center');text(num(val),x+92,691,28,C.muted,500,'center');if(i<4)arrow(x+200,651,x+265,651,C.muted);});bottom('E → D → C → B → A','坐标只负责生成顺序');break;}
+ case 'sweep':sweeps(firstTrace,j<2?j:j===2?2:1,290);pill('合格候选中最小：3',1170,745,580,C.teal);bottom('四个候选代价：6、3、5、6 → 选择 ED │ CBA','局部面积过滤 20%–80%');break;
  case 'firstsplit':graph(coarse,{parts:2,previous:all,p:progress,highlight:j===1?[3,5]:[]});bottom('第一刀：C–D(2) + C–E(1) = 3','目前只有两组，还未完成');break;
+ case 'subgraph':{const sub={nodes:secondTrace.nodes,edges:secondTrace.edges,sizes:g.sizes},a=Object.fromEntries(sub.nodes.map(n=>[n,0]));graph(a,{x:350,y:350,w:700,h:335,parts:1,model:sub});matrix(secondTrace,1190,295,90);text('ABC 的内部子图',700,290,31,C.teal,650,'center');pill('DE 保留，暂不再拆',1180,715,540,C.blue);bottom('只用 AB(5)、AC(1)、BC(4)，重新算出 A → B → C','第一刀的 3 继续保留');break;}
+ case 'secondsweep':text('重新计算的谱坐标与排序',350,300,29,C.muted,600);second.order.forEach(([n,v],i)=>{const x=450+i*470;rect(x,330,350,92,15,'#e6f2e9');text(`${n}  ${num(v)}`,x+175,390,36,C.teal,650,'center');});sweeps(secondTrace,j,470);bottom('两个候选：A │ BC 为 6；AB │ C 为 5 → 选择 5','这是第二刀新增的代价');break;
  case 'secondsplit':graph(rec,{previous:coarse,p:progress,highlight:j===1?[1,2]:[]});bottom('第二刀新增：A–C(1) + B–C(4) = 5','最终三组为 AB、C、DE');break;
  case 'cumulative':[['第一刀',3,C.blue],['新增',5,C.orange],['最终',8,C.teal]].forEach(([label,n,col],i)=>{const x=420+i*500;text(label,x+150,360,32,C.muted,500,'center');rect(x,400,300,n*35,20,col+'19');text(n,x+150,515,90,col,700,'center');});text('+',910,530,65,C.muted,500,'center');text('=',1410,530,65,C.muted,500,'center');bottom('最终重算：1 + 4 + 2 + 1 = 8','已切开的边继续计入最终代价');break;
  case 'compare':text('轮询分配',650,295,34,C.orange,650,'center');text('递归二分',1440,295,34,C.teal,650,'center');graph(rr,{x:295,y:310,w:690,h:400,small:true});graph(rec,{x:1080,y:310,w:690,h:400,small:true});text('18',650,775,53,C.orange,700,'center');text('8',1440,775,53,C.teal,700,'center');bottom('少切开 A–B(5)、D–E(5)，代价减少 10','两种人数分布都满足容量');break;
@@ -52,7 +72,7 @@ function draw(s,t,j){const progress=ease((t-s.cues[0].start-.5)/3);
  case 'area':{const weighted={...g,sizes:{...g.sizes,A:2}},m=metrics(weighted,rr,3,2);graph(rr,{model:weighted,y:260,h:425,highlight:[]});g.nodes.forEach(n=>{const pos=layout(g,rr,3,1470,425).positions[n];pill(`面积 ${weighted.sizes[n]}`,300+pos[0]-70,260+pos[1]+(n==='B'?-95:45),140,n==='A'?C.orange:C.muted);});bottom(`人数 2 / 2 / 1；面积 ${m.sizes.join(' / ')}，第一组超容`,'节点面积与边权分别计算',C.orange);break;}
  case 'manual':card('先检查约束',['每个节点都有分区','k 个分区都非空','每组面积不超过容量'],350,330,660,365);card('再检查连接代价',['找出跨区边','每条边只计算一次','与页面结果相互核对'],1100,330,660,365,C.blue);bottom('在实验台重现 18 与 8，再尝试自己的分法');break;
  case 'exercise':{const changed={...g,edges:g.edges.map(e=>e.u==='A'&&e.v==='B'?{...e,w:1}:e)};graph(rr,{model:changed,highlight:[0]});pill('A–B：5 改成 1',1300,250,450,C.orange);bottom(j<1?'保留分组不动：两种割代价分别是多少？':j===1?'先重算固定分组，再重新运行算法':'改变 k 时，容量也要一起检查','暂停想一想');break;}
- case 'recap':{const labels=['图与边权','分区数与容量','节点归属','跨区边权之和','比较与改进'];labels.forEach((l,i)=>{const x=370+i*285;rect(x,360,245,250,24,palette[i%3]+'10');circle(x+122,425,30,palette[i%3]);text(i+1,x+122,437,34,'white',600,'center');fit(l,x+122,525,220,29,C.ink,650);if(i<4)arrow(x+252,480,x+275,480,C.muted);});bottom('轮询 18；递归 3 + 5 = 8；一次合适交换也可到 8');break;}
+ case 'recap':{const labels=['当前子图','矩阵与坐标','排序与试切','递归下一刀','总代价与容量'];labels.forEach((l,i)=>{const x=370+i*285;rect(x,360,245,250,24,palette[i%3]+'10');circle(x+122,425,30,palette[i%3]);text(i+1,x+122,437,34,'white',600,'center');fit(l,x+122,525,220,29,C.ink,650);if(i<4)arrow(x+252,480,x+275,480,C.muted);});bottom('每一刀都解释：为什么这样排，为什么在这里切');break;}
  case 'finish':text('好的分组，需要同时解释',1080,360,45,C.ink,650,'center');card('连接代价',['哪些边跨区？','权重相加是多少？'],350,420,660,290);card('分区负载',['每组有多少节点或面积？','是否满足非空与容量？'],1100,420,660,290,C.blue);bottom('配套网站提供实验、练习解析、课件与离线包');break;
  }
 }
